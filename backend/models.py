@@ -17,7 +17,8 @@ class Admin(db.Model):
         return check_password_hash(self.password_hash, password)
 
 
-class Auditors(db.Model):
+class User(db.Model):
+    __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     username = db.Column(db.String(120), unique=True, nullable=False)
