@@ -45,7 +45,7 @@ class User(db.Model):
 
 class Stage1(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     audit_number = db.Column(db.String(255), nullable=False)  # ✅ ADD
     organisation_name = db.Column(db.String(255), nullable=False)
@@ -80,7 +80,7 @@ class Stage1(db.Model):
 
 class Stage2(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     audit_number = db.Column(db.String(255), nullable=False)  # ✅ ADD
     organisation_name = db.Column(db.String(255), nullable=False)
@@ -103,7 +103,7 @@ class Stage2(db.Model):
 
 class Dashboard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     org_name = db.Column(db.String(255), nullable=False)
     audit_number = db.Column(db.String(255), nullable=False)
     auditor = db.Column(db.String(255), nullable=False)
