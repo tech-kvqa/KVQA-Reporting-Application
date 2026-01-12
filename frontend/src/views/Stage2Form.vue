@@ -653,8 +653,13 @@ export default {
 
     async saveStage2() {
       const token = localStorage.getItem("token");
+    //   await axios.post(
+    //     "http://127.0.0.1:5000/stage2",
+    //     this.buildFormData(),
+    //     { headers: { Authorization: `Bearer ${token}` } }
+    //   );
       await axios.post(
-        "http://127.0.0.1:5000/stage2",
+        "https://kvqa-reporting-application.onrender.com/stage2",
         this.buildFormData(),
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -691,7 +696,8 @@ export default {
         const token = localStorage.getItem("token");
         const res = await axios
             .get(
-            `http://127.0.0.1:5000/stage2-data?audit_number=${this.auditNumber}`,
+            // `http://127.0.0.1:5000/stage2-data?audit_number=${this.auditNumber}`,
+            `https://kvqa-reporting-application.onrender.com/stage2-data?audit_number=${this.auditNumber}`,
             { headers: { Authorization: `Bearer ${token}` } }
             )
             .catch(() => null);
@@ -731,7 +737,8 @@ export default {
             const token = localStorage.getItem("token");
 
             const response = await axios.get(
-            "http://127.0.0.1:5000/stage2-prefill",
+            // "http://127.0.0.1:5000/stage2-prefill",
+            "https://kvqa-reporting-application.onrender.com/stage2-prefill",
             {
                 params: { audit_number: this.auditNumber },
                 headers: {

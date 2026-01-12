@@ -503,7 +503,7 @@
           }
   
           // const response = await axios.get(`http://127.0.0.1:5000/application/${this.organisation_name}`, {
-          const response = await axios.get(`http://127.0.0.1:5000/application/${this.organisation_name}`, {
+          const response = await axios.get(`https://kvqa-reporting-application.onrender.com/application/${this.organisation_name}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -526,7 +526,7 @@
   
           const cleanFilename = filename.replace(/^uploads\//, "");
           // const response = await axios.get(`http://127.0.0.1:5000/download/${encodeURIComponent(cleanFilename)}`, {
-          const response = await axios.get(`http://127.0.0.1:5000/download/${encodeURIComponent(cleanFilename)}`, {
+          const response = await axios.get(`https://kvqa-reporting-application.onrender.com/download/${encodeURIComponent(cleanFilename)}`, {
             headers: { Authorization: `Bearer ${token}` },
             responseType: "blob",
           });

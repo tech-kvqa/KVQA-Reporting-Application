@@ -271,7 +271,7 @@
     }
 
     // const response = await axios.get("http://127.0.0.1:5000/dashboard", {
-    const response = await axios.get("http://127.0.0.1:5000/dashboard", {
+    const response = await axios.get("https://kvqa-reporting-application.onrender.com/dashboard", {
       headers: {
         Authorization: `Bearer ${token}`, // Attach the token in the request header
       },
@@ -311,7 +311,7 @@
         }
 
         // await axios.delete(`http://127.0.0.1:5000/dashboard/${id}`, {
-        await axios.delete(`http://127.0.0.1:5000/dashboard/${id}`, {
+        await axios.delete(`https://kvqa-reporting-application.onrender.com/dashboard/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`, // Attach token in the request header
             },
@@ -340,7 +340,7 @@ async searchApplications() {
         }
 
         // const response = await axios.get("http://127.0.0.1:5000/search", {
-        const response = await axios.get("http://127.0.0.1:5000/search", {
+        const response = await axios.get("https://kvqa-reporting-application.onrender.com/search", {
           headers: { Authorization: `Bearer ${token}` },
           params: {
             org_name: this.organisationName.trim(),

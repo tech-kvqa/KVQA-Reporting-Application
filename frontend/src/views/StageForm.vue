@@ -717,7 +717,8 @@ export default {
     async sendStage1Mail() {
       const token = localStorage.getItem("token");
       await axios.post(
-        "http://127.0.0.1:5000/stage1",
+        // "http://127.0.0.1:5000/stage1",
+        "https://kvqa-reporting-application.onrender.com/stage1",
         this.buildFormData(),
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -754,7 +755,8 @@ export default {
       const token = localStorage.getItem("token");
       const res = await axios
         .get(
-          `http://127.0.0.1:5000/stage1-data?audit_number=${this.auditNumber}`,
+          // `http://127.0.0.1:5000/stage1-data?audit_number=${this.auditNumber}`,
+          `https://kvqa-reporting-application.onrender.com/stage1-data?audit_number=${this.auditNumber}`,
           { headers: { Authorization: `Bearer ${token}` } }
         )
         .catch(() => null);

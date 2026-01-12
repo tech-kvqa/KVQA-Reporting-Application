@@ -324,7 +324,7 @@ async submitApplication() {
     }
 
     // const response = await axios.post("http://127.0.0.1:5000/upload_zip", formData, {
-    const response = await axios.post("http://127.0.0.1:5000/upload_zip", formData, {
+    const response = await axios.post("https://kvqa-reporting-application.onrender.com/upload_zip", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         "Authorization": `Bearer ${token}`
@@ -343,7 +343,7 @@ async submitApplication() {
       try {
         const token = localStorage.getItem("token");
         // const response = await axios.get("http://127.0.0.1:5000/users", {
-        const response = await axios.get("http://127.0.0.1:5000/users", {
+        const response = await axios.get("https://kvqa-reporting-application.onrender.com/users", {
           headers: { Authorization: `Bearer ${token}` }
         });
         this.users = response.data;

@@ -106,7 +106,8 @@ export default {
   methods: {
     async adminLogin() {
       try {
-        const response = await axios.post("http://127.0.0.1:5000/admin/login", {
+        // const response = await axios.post("http://127.0.0.1:5000/admin/login", {
+        const response = await axios.post("https://kvqa-reporting-application.onrender.com/admin/login", {
           email: this.email,
           password: this.password
         });
