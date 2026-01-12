@@ -1,0 +1,8 @@
+myenv/
+__pycache__/
+node_modules/
+*.pyc
+*.pyo
+*.pyd
+.env
+New folder
