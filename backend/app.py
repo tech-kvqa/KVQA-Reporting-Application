@@ -138,9 +138,9 @@ def insert_dummy_data():
 
     with app.app_context():
         for data in users_data:
-            existing_user = User.query.filter_by(email=data['email']).first()
+            existing_user = Auditors.query.filter_by(email=data['email']).first()
             if not existing_user:
-                user = User(email=data['email'], username=data['username'])
+                user = Auditors(email=data['email'], username=data['username'])
                 user.set_password(data['password'])  # ✅ Use set_password()
                 db.session.add(user)
 
@@ -188,7 +188,7 @@ def home():
 def user_get():
     # Get logged-in user's email
     current_user_email = get_jwt_identity()['email']
-    users = User.query.filter_by(
+    users = Auditors.query.filter_by(
         email=current_user_email).all()  # Fetch only their data
     user_list = [
         {"id": user.id, "email": user.email, "username": user.username}
@@ -206,7 +206,7 @@ def login():
     # print("Email: ", email)
     # print("Password: ", password)
 
-    user = User.query.filter_by(email=email).first()
+    user = Auditors.query.filter_by(email=email).first()
     # ✅ Compare with check_password()
     if user and user.check_password(password):
         access_token = create_access_token(identity=user.email)
@@ -400,7 +400,7 @@ def login():
 def submit_stage1():
     try:
         user_email = get_jwt_identity()
-        user = User.query.filter_by(email=user_email).first()
+        user = Auditors.query.filter_by(email=user_email).first()
         if not user:
             return jsonify({"error": "User not found"}), 404
 
@@ -664,7 +664,7 @@ def submit_stage1():
 def submit_stage2():
     try:
         user_email = get_jwt_identity()
-        user = User.query.filter_by(email=user_email).first()
+        user = Auditors.query.filter_by(email=user_email).first()
         if not user:
             return jsonify({"error": "User not found"}), 404
 
@@ -782,7 +782,7 @@ def dashboard_data():
     try:
         data = request.get_json()
         user_email = get_jwt_identity()
-        user = User.query.filter_by(email=user_email).first()
+        user = Auditors.query.filter_by(email=user_email).first()
 
         new_application = Dashboard(
             org_name=data.get("org_name"),
@@ -846,7 +846,7 @@ def dashboard_data():
 def get_dashboard_data():
     current_user_email = get_jwt_identity()  # Get logged-in user's email
 
-    user = User.query.filter_by(email=current_user_email).first()
+    user = Auditors.query.filter_by(email=current_user_email).first()
 
     # Filter applications where the user is a decision maker
     applications = Dashboard.query.filter(
@@ -887,7 +887,7 @@ def get_dashboard_data():
 def delete_application(id):
     try:
         user_email = get_jwt_identity()
-        user = User.query.filter_by(email=user_email).first()
+        user = Auditors.query.filter_by(email=user_email).first()
 
         application = Dashboard.query.filter_by(id=id, user_id=user.id).first()
         if not application:
@@ -1177,7 +1177,7 @@ def send_email():
 def get_application_details(organisation_name):
     try:
         user_email = get_jwt_identity()
-        user = User.query.filter_by(email=user_email).first()
+        user = Auditors.query.filter_by(email=user_email).first()
         if not user:
             return jsonify({"error": "User not found"}), 404
 
@@ -1320,7 +1320,7 @@ def get_application_details(organisation_name):
 @jwt_required()
 def download_file(filename):
     user_email = get_jwt_identity()
-    user = User.query.filter_by(email=user_email).first()
+    user = Auditors.query.filter_by(email=user_email).first()
     if not user:
         return jsonify({"error": "User not found"}), 404
 
@@ -1353,7 +1353,7 @@ def search_dashboard():
     print(f"🔹 JWT Identity (Email): {user_email}")
 
     # Fetch user by email
-    user = User.query.filter_by(email=user_email).first()
+    user = Auditors.query.filter_by(email=user_email).first()
     if not user:
         print(f"❌ No user found with email: {user_email}")
         return jsonify({"error": "User not found"}), 400
@@ -1463,12 +1463,12 @@ def register_user():
     if not email or not username or not password:
         return jsonify({"error": "All fields are required"}), 400
 
-    existing_user = User.query.filter(
-        (User.email == email) | (User.username == username)).first()
+    existing_user = Auditors.query.filter(
+        (Auditors.email == email) | (Auditors.username == username)).first()
     if existing_user:
         return jsonify({"error": "Email or Username already exists"}), 409
 
-    new_user = User(email=email, username=username)
+    new_user = Auditors(email=email, username=username)
     new_user.set_password(password)  # Hash password before saving
 
     db.session.add(new_user)
@@ -1480,7 +1480,7 @@ def register_user():
 @app.route('/admin/users', methods=['GET'])
 @cross_origin()
 def get_users():
-    users = User.query.all()
+    users = Auditors.query.all()
     user_list = [{"id": user.id, "email": user.email,
                   "username": user.username} for user in users]
     return jsonify({"users": user_list}), 200
@@ -1489,7 +1489,7 @@ def get_users():
 @app.route('/admin/users/<int:user_id>', methods=['DELETE'])
 @cross_origin()
 def delete_user(user_id):
-    user = User.query.get(user_id)
+    user = Auditors.query.get(user_id)
     if not user:
         return jsonify({"message": "User not found"}), 404
 
@@ -1906,7 +1906,7 @@ def search_dashboard_admin():
 @jwt_required()
 def get_stage1_data():
     user_email = get_jwt_identity()
-    user = User.query.filter_by(email=user_email).first()
+    user = Auditors.query.filter_by(email=user_email).first()
     if not user:
         return jsonify({"error": "User not found"}), 404
 
@@ -1960,7 +1960,7 @@ def get_stage1_data():
 @jwt_required()
 def get_stage2_data():
     user_email = get_jwt_identity()
-    user = User.query.filter_by(email=user_email).first()
+    user = Auditors.query.filter_by(email=user_email).first()
     if not user:
         return jsonify({"error": "User not found"}), 404
 
@@ -1993,7 +1993,7 @@ def get_stage2_data():
 @app.route("/users", methods=["GET"])
 @jwt_required()  # Ensure only authenticated users can access this
 def get_users_data():
-    users = User.query.all()
+    users = Auditors.query.all()
     user_list = [{"id": user.id, "username": user.username,
                   "email": user.email} for user in users]
     return jsonify(user_list), 200
@@ -2209,7 +2209,7 @@ def decision_get_application_details(organisation_name):
 @jwt_required()
 def stage2_prefill():
     user_email = get_jwt_identity()
-    user = User.query.filter_by(email=user_email).first()
+    user = Auditors.query.filter_by(email=user_email).first()
 
     if not user:
         return jsonify({"error": "User not found"}), 404
