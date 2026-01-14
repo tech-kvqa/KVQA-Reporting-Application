@@ -38,8 +38,10 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
 db.init_app(app)
 jwt = JWTManager(app)
 
-UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
+# UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
+UPLOAD_FOLDER = "/var/data/uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 ALLOWED_EXTENSIONS = {"zip", "pdf", "xlsx", "doc", "docx", "txt"}
 
 
