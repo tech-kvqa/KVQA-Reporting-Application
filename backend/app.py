@@ -684,7 +684,7 @@ def submit_stage2():
             user_id=user.id
         ).first()
 
-        os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+        # os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
         # 📁 FILES
         plan_file = request.files.get("stage2_plan")
