@@ -39,7 +39,9 @@ db.init_app(app)
 jwt = JWTManager(app)
 
 # UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
-UPLOAD_FOLDER = "/var/data/uploads"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 ALLOWED_EXTENSIONS = {"zip", "pdf", "xlsx", "doc", "docx", "txt"}
