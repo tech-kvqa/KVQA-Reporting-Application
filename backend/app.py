@@ -12,6 +12,7 @@ from email.message import EmailMessage
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 from datetime import timedelta
+import traceback
 
 
 load_dotenv()
@@ -754,6 +755,7 @@ def submit_stage2():
         return jsonify({"message": msg}), 200
 
     except Exception as e:
+        traceback.print_exc()
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
