@@ -640,8 +640,20 @@ export default {
       fd.append("mail_from", this.mailFrom);
       fd.append("mail_to", this.mailTo);
       fd.append("mail_to_report", this.mailToReport);
-      fd.append("selected_date", this.selectedDate || "");
-      fd.append("selected_comment_date", this.selectedCommentDate || "");
+      // fd.append("selected_date", this.selectedDate || "");
+      fd.append(
+        "selected_date",
+        this.selectedDate
+          ? new Date(this.selectedDate).toISOString().split("T")[0]
+          : ""
+      );
+      // fd.append("selected_comment_date", this.selectedCommentDate || "");
+      fd.append(
+        "selected_comment_date",
+        this.selectedCommentDate
+          ? new Date(this.selectedCommentDate).toISOString().split("T")[0]
+          : ""
+      );
       fd.append("comment", this.comment || "");
 
       if (this.stage2Plan) fd.append("stage2_plan", this.stage2Plan);
