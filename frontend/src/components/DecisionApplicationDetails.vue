@@ -22,10 +22,16 @@
         <!-- Zip File Download -->
         <v-row class="mt-3">
           <v-col cols="12">
-            <v-btn v-if="adminapplicationDetails?.zip_file_name"
+            <!-- <v-btn v-if="adminapplicationDetails?.zip_file_name"
                   color="primary"
                   class="elevation-1"
                   @click="downloadFile(adminapplicationDetails?.zip_file_name)">
+              Download Zip File
+            </v-btn> -->
+            <v-btn
+                  color="primary"
+                  class="elevation-1"
+                  @click="downloadFile(adminapplicationDetails.zip_file_name)">
               Download Zip File
             </v-btn>
           </v-col>
