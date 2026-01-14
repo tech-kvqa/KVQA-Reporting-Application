@@ -225,7 +225,7 @@
     
             const cleanFilename = filename.replace(/^uploads\//, "");
             // const response = await axios.get(`http://127.0.0.1:5000/admin/download/${encodeURIComponent(cleanFilename)}`, {
-            const response = await axios.get(`https://kvqa-reporting-application.onrender.com/download/${encodeURIComponent(cleanFilename)}`, {
+            const response = await axios.get(`https://kvqa-reporting-application.onrender.com/admin/download/${encodeURIComponent(cleanFilename)}`, {
               headers: { Authorization: `Bearer ${token}` },
               responseType: "blob",
             });

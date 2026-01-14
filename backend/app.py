@@ -1586,102 +1586,183 @@ def delete_user(user_id):
 #         return jsonify({"error": str(e)}), 500
 
 
+# @app.route("/admin/application/<string:organisation_name>", methods=["GET"])
+# def admin_get_application_details(organisation_name):
+#     try:
+#         # Fetch matching records
+#         stage1_data = Stage1.query.filter(
+#             Stage1.organisation_name.ilike(organisation_name)).all()
+#         stage2_data = Stage2.query.filter(
+#             Stage2.organisation_name.ilike(organisation_name)).all()
+#         dashboard_data = Dashboard.query.filter(
+#             Dashboard.org_name.ilike(organisation_name)).all()
+
+#         if not stage1_data and not stage2_data and not dashboard_data:
+#             return jsonify({"message": f"No data found for organisation '{organisation_name}'"}), 404
+
+#         applications = []
+
+#         # Process Stage 1 data
+#         for stage1 in stage1_data:
+#             applications.append({
+#                 "organisation_name": stage1.organisation_name,
+#                 "user_id": stage1.user_id,
+#                 "stage1": {
+#                     "id": stage1.id,
+#                     "scope": stage1.scope,
+#                     "stage1_plan": stage1.stage1_plan,
+#                     "mail_from": stage1.mail_from,
+#                     "mail_to": stage1.mail_to,
+#                     "selected_date": stage1.selected_date,
+#                     "selected_comment_date": stage1.selected_comment_date,
+#                     "stage1_report": stage1.stage1_report,
+#                     "comment": stage1.comment
+#                 },
+#                 "stage2": None,
+#                 "zip_file_name": None
+#             })
+
+#         # Process Stage 2 data
+#         for stage2 in stage2_data:
+#             found = False
+#             for app in applications:
+#                 if app["organisation_name"] == stage2.organisation_name and app["user_id"] == stage2.user_id:
+#                     app["stage2"] = {
+#                         "id": stage2.id,
+#                         "scope": stage2.scope,
+#                         "stage2_plan": stage2.stage2_plan,
+#                         "mail_from": stage2.mail_from,
+#                         "mail_to": stage2.mail_to,
+#                         "selected_date": stage2.selected_date,
+#                         "selected_comment_date": stage2.selected_comment_date,
+#                         "stage2_report": stage2.stage2_report,
+#                         "comment": stage2.comment
+#                     }
+#                     found = True
+#                     break
+
+#             if not found:
+#                 applications.append({
+#                     "organisation_name": stage2.organisation_name,
+#                     "user_id": stage2.user_id,
+#                     "stage1": None,
+#                     "stage2": {
+#                         "id": stage2.id,
+#                         "scope": stage2.scope,
+#                         "stage2_plan": stage2.stage2_plan,
+#                         "mail_from": stage2.mail_from,
+#                         "mail_to": stage2.mail_to,
+#                         "selected_date": stage2.selected_date,
+#                         "selected_comment_date": stage2.selected_comment_date,
+#                         "stage2_report": stage2.stage2_report,
+#                         "comment": stage2.comment
+#                     },
+#                     "zip_file_name": None
+#                 })
+
+#         # Process Dashboard data and add zip file details
+#         for dashboard in dashboard_data:
+#             found = False
+#             for app in applications:
+#                 if app["organisation_name"] == dashboard.org_name and app["user_id"] == dashboard.user_id:
+#                     # Ensure zip file is added to an existing application
+#                     app["zip_file_name"] = dashboard.zip_file_name
+#                     found = True
+#                     break
+
+#             if not found:
+#                 # If no stage1/stage2 data but dashboard entry exists, create an entry
+#                 applications.append({
+#                     "organisation_name": dashboard.org_name,
+#                     "user_id": dashboard.user_id,
+#                     "stage1": None,
+#                     "stage2": None,
+#                     "zip_file_name": dashboard.zip_file_name
+#                 })
+
+#         # Debugging output
+#         print("Retrieved applications:", applications)
+
+#         return jsonify({"applications": applications}), 200
+
+#     except Exception as e:
+#         print(f"Error fetching applications: {str(e)}")
+#         return jsonify({"error": str(e)}), 500
+
 @app.route("/admin/application/<string:organisation_name>", methods=["GET"])
 def admin_get_application_details(organisation_name):
     try:
-        # Fetch matching records
-        stage1_data = Stage1.query.filter(
-            Stage1.organisation_name.ilike(organisation_name)).all()
-        stage2_data = Stage2.query.filter(
-            Stage2.organisation_name.ilike(organisation_name)).all()
-        dashboard_data = Dashboard.query.filter(
-            Dashboard.org_name.ilike(organisation_name)).all()
+        # Fetch all matching records
+        stage1_data = Stage1.query.filter(Stage1.organisation_name.ilike(organisation_name)).all()
+        stage2_data = Stage2.query.filter(Stage2.organisation_name.ilike(organisation_name)).all()
+        dashboard_data = Dashboard.query.filter(Dashboard.org_name.ilike(organisation_name)).all()
 
         if not stage1_data and not stage2_data and not dashboard_data:
             return jsonify({"message": f"No data found for organisation '{organisation_name}'"}), 404
 
-        applications = []
+        # Use a dictionary keyed by organisation_name to merge stage1, stage2, and dashboard
+        applications_dict = {}
 
-        # Process Stage 1 data
+        # Merge Stage1 data
         for stage1 in stage1_data:
-            applications.append({
-                "organisation_name": stage1.organisation_name,
-                "user_id": stage1.user_id,
-                "stage1": {
-                    "id": stage1.id,
-                    "scope": stage1.scope,
-                    "stage1_plan": stage1.stage1_plan,
-                    "mail_from": stage1.mail_from,
-                    "mail_to": stage1.mail_to,
-                    "selected_date": stage1.selected_date,
-                    "selected_comment_date": stage1.selected_comment_date,
-                    "stage1_report": stage1.stage1_report,
-                    "comment": stage1.comment
-                },
-                "stage2": None,
-                "zip_file_name": None
-            })
-
-        # Process Stage 2 data
-        for stage2 in stage2_data:
-            found = False
-            for app in applications:
-                if app["organisation_name"] == stage2.organisation_name and app["user_id"] == stage2.user_id:
-                    app["stage2"] = {
-                        "id": stage2.id,
-                        "scope": stage2.scope,
-                        "stage2_plan": stage2.stage2_plan,
-                        "mail_from": stage2.mail_from,
-                        "mail_to": stage2.mail_to,
-                        "selected_date": stage2.selected_date,
-                        "selected_comment_date": stage2.selected_comment_date,
-                        "stage2_report": stage2.stage2_report,
-                        "comment": stage2.comment
-                    }
-                    found = True
-                    break
-
-            if not found:
-                applications.append({
-                    "organisation_name": stage2.organisation_name,
-                    "user_id": stage2.user_id,
-                    "stage1": None,
-                    "stage2": {
-                        "id": stage2.id,
-                        "scope": stage2.scope,
-                        "stage2_plan": stage2.stage2_plan,
-                        "mail_from": stage2.mail_from,
-                        "mail_to": stage2.mail_to,
-                        "selected_date": stage2.selected_date,
-                        "selected_comment_date": stage2.selected_comment_date,
-                        "stage2_report": stage2.stage2_report,
-                        "comment": stage2.comment
-                    },
-                    "zip_file_name": None
-                })
-
-        # Process Dashboard data and add zip file details
-        for dashboard in dashboard_data:
-            found = False
-            for app in applications:
-                if app["organisation_name"] == dashboard.org_name and app["user_id"] == dashboard.user_id:
-                    # Ensure zip file is added to an existing application
-                    app["zip_file_name"] = dashboard.zip_file_name
-                    found = True
-                    break
-
-            if not found:
-                # If no stage1/stage2 data but dashboard entry exists, create an entry
-                applications.append({
-                    "organisation_name": dashboard.org_name,
-                    "user_id": dashboard.user_id,
+            key = stage1.organisation_name
+            if key not in applications_dict:
+                applications_dict[key] = {
+                    "organisation_name": stage1.organisation_name,
                     "stage1": None,
                     "stage2": None,
-                    "zip_file_name": dashboard.zip_file_name
-                })
+                    "zip_file_name": None
+                }
+            applications_dict[key]["stage1"] = {
+                "id": stage1.id,
+                "scope": stage1.scope,
+                "stage1_plan": stage1.stage1_plan,
+                "mail_from": stage1.mail_from,
+                "mail_to": stage1.mail_to,
+                "selected_date": stage1.selected_date,
+                "selected_comment_date": stage1.selected_comment_date,
+                "stage1_report": stage1.stage1_report,
+                "comment": stage1.comment
+            }
 
-        # Debugging output
-        print("Retrieved applications:", applications)
+        # Merge Stage2 data
+        for stage2 in stage2_data:
+            key = stage2.organisation_name
+            if key not in applications_dict:
+                applications_dict[key] = {
+                    "organisation_name": stage2.organisation_name,
+                    "stage1": None,
+                    "stage2": None,
+                    "zip_file_name": None
+                }
+            applications_dict[key]["stage2"] = {
+                "id": stage2.id,
+                "scope": stage2.scope,
+                "stage2_plan": stage2.stage2_plan,
+                "mail_from": stage2.mail_from,
+                "mail_to": stage2.mail_to,
+                "selected_date": stage2.selected_date,
+                "selected_comment_date": stage2.selected_comment_date,
+                "stage2_report": stage2.stage2_report,
+                "comment": stage2.comment
+            }
+
+        # Merge Dashboard zip files
+        for dashboard in dashboard_data:
+            key = dashboard.org_name
+            if key not in applications_dict:
+                applications_dict[key] = {
+                    "organisation_name": dashboard.org_name,
+                    "stage1": None,
+                    "stage2": None,
+                    "zip_file_name": None
+                }
+            applications_dict[key]["zip_file_name"] = dashboard.zip_file_name
+
+        applications = list(applications_dict.values())
+
+        # Debug print
+        print("Merged applications:", applications)
 
         return jsonify({"applications": applications}), 200
 
@@ -1736,57 +1817,106 @@ def admin_get_application_details(organisation_name):
 #         return jsonify({"error": str(e)}), 404
 
 
+# @app.route("/admin/download/<path:filename>", methods=["GET"])
+# @jwt_required()
+# def admin_download_file(filename):
+#     try:
+#         filename = filename.replace("uploads/", "")  # Remove "uploads/" prefix
+
+#         print(f"Requested filename: {filename}")  # Debug print
+
+#         # ✅ Print all available filenames in Dashboard
+#         all_files = Dashboard.query.with_entities(
+#             Dashboard.zip_file_name).all()
+#         # Debug print
+#         print(f"Database files: {[file[0] for file in all_files]}")
+
+#         # ✅ Check if the file exists in Dashboard
+#         dashboard_file = Dashboard.query.filter(
+#             # If stored without "uploads/"
+#             (Dashboard.zip_file_name == filename) |
+#             # If stored with "uploads/"
+#             (Dashboard.zip_file_name == f"uploads/{filename}")
+#         ).first()
+#         print(f"Dashboard file found: {dashboard_file}")
+
+#         # ✅ Check Stage1 and Stage2 tables
+#         stage1_file = Stage1.query.filter(
+#             (Stage1.stage1_plan == f"uploads/{filename}") |
+#             (Stage1.stage1_report == f"uploads/{filename}")
+#         ).first()
+#         stage2_file = Stage2.query.filter(
+#             (Stage2.stage2_plan == f"uploads/{filename}") |
+#             (Stage2.stage2_report == f"uploads/{filename}")
+#         ).first()
+
+#         # ❌ If the file is not found in any table, return an error
+#         if not dashboard_file and not stage1_file and not stage2_file:
+#             print(f"File '{filename}' not found in database.")
+#             return jsonify({"error": "File not found in database"}), 404
+
+#         # ✅ Ensure the file exists in the uploads directory
+#         upload_folder = "uploads"
+#         file_path = os.path.join(upload_folder, filename)
+
+#         if not os.path.exists(file_path):
+#             print(f"File '{file_path}' not found in directory.")
+#             return jsonify({"error": "File not found in directory"}), 404
+
+#         print(f"File '{filename}' found! Sending file...")
+#         return send_from_directory(upload_folder, filename, as_attachment=True)
+
+#     except Exception as e:
+#         print(f"Error: {str(e)}")
+#         return jsonify({"error": str(e)}), 500
+
 @app.route("/admin/download/<path:filename>", methods=["GET"])
 @jwt_required()
 def admin_download_file(filename):
     try:
-        filename = filename.replace("uploads/", "")  # Remove "uploads/" prefix
+        filename = filename.replace("uploads/", "")
+        print(f"Requested filename: {filename}")
 
-        print(f"Requested filename: {filename}")  # Debug print
-
-        # ✅ Print all available filenames in Dashboard
-        all_files = Dashboard.query.with_entities(
-            Dashboard.zip_file_name).all()
-        # Debug print
-        print(f"Database files: {[file[0] for file in all_files]}")
-
-        # ✅ Check if the file exists in Dashboard
+        # ---- DASHBOARD (ZIP) ----
         dashboard_file = Dashboard.query.filter(
-            # If stored without "uploads/"
             (Dashboard.zip_file_name == filename) |
-            # If stored with "uploads/"
             (Dashboard.zip_file_name == f"uploads/{filename}")
         ).first()
-        print(f"Dashboard file found: {dashboard_file}")
 
-        # ✅ Check Stage1 and Stage2 tables
+        # ---- STAGE 1 ----
         stage1_file = Stage1.query.filter(
+            (Stage1.stage1_plan == filename) |
             (Stage1.stage1_plan == f"uploads/{filename}") |
+            (Stage1.stage1_report == filename) |
             (Stage1.stage1_report == f"uploads/{filename}")
         ).first()
+
+        # ---- STAGE 2 ----
         stage2_file = Stage2.query.filter(
+            (Stage2.stage2_plan == filename) |
             (Stage2.stage2_plan == f"uploads/{filename}") |
+            (Stage2.stage2_report == filename) |
             (Stage2.stage2_report == f"uploads/{filename}")
         ).first()
 
-        # ❌ If the file is not found in any table, return an error
+        # ❌ Not found anywhere
         if not dashboard_file and not stage1_file and not stage2_file:
             print(f"File '{filename}' not found in database.")
             return jsonify({"error": "File not found in database"}), 404
 
-        # ✅ Ensure the file exists in the uploads directory
+        # ---- FILE SYSTEM CHECK ----
         upload_folder = "uploads"
         file_path = os.path.join(upload_folder, filename)
 
         if not os.path.exists(file_path):
             print(f"File '{file_path}' not found in directory.")
-            return jsonify({"error": "File not found in directory"}), 404
+            return jsonify({"error": "File not found on server"}), 404
 
         print(f"File '{filename}' found! Sending file...")
         return send_from_directory(upload_folder, filename, as_attachment=True)
 
     except Exception as e:
-        print(f"Error: {str(e)}")
+        print("Download error:", str(e))
         return jsonify({"error": str(e)}), 500
 
 
@@ -2112,98 +2242,179 @@ def get_decision_maker_apps():
 #         return jsonify({"error": str(e)}), 500
 
 
+# @app.route("/decision/application/<string:organisation_name>", methods=["GET"])
+# def decision_get_application_details(organisation_name):
+#     try:
+#         # Fetch matching records
+#         stage1_data = Stage1.query.filter(
+#             Stage1.organisation_name.ilike(organisation_name)).all()
+#         stage2_data = Stage2.query.filter(
+#             Stage2.organisation_name.ilike(organisation_name)).all()
+#         dashboard_data = Dashboard.query.filter(
+#             Dashboard.org_name.ilike(organisation_name)).all()
+
+#         if not stage1_data and not stage2_data and not dashboard_data:
+#             return jsonify({"message": f"No data found for organisation '{organisation_name}'"}), 404
+
+#         applications = []
+
+#         # Process Stage 1 data
+#         for stage1 in stage1_data:
+#             applications.append({
+#                 "organisation_name": stage1.organisation_name,
+#                 "user_id": stage1.user_id,
+#                 "stage1": {
+#                     "id": stage1.id,
+#                     "scope": stage1.scope,
+#                     "stage1_plan": stage1.stage1_plan,
+#                     "mail_from": stage1.mail_from,
+#                     "mail_to": stage1.mail_to,
+#                     "selected_date": stage1.selected_date,
+#                     "selected_comment_date": stage1.selected_comment_date,
+#                     "stage1_report": stage1.stage1_report,
+#                     "comment": stage1.comment
+#                 },
+#                 "stage2": None,
+#                 "zip_file_name": None
+#             })
+
+#         # Process Stage 2 data
+#         for stage2 in stage2_data:
+#             found = False
+#             for app in applications:
+#                 if app["organisation_name"] == stage2.organisation_name and app["user_id"] == stage2.user_id:
+#                     app["stage2"] = {
+#                         "id": stage2.id,
+#                         "scope": stage2.scope,
+#                         "stage2_plan": stage2.stage2_plan,
+#                         "mail_from": stage2.mail_from,
+#                         "mail_to": stage2.mail_to,
+#                         "selected_date": stage2.selected_date,
+#                         "selected_comment_date": stage2.selected_comment_date,
+#                         "stage2_report": stage2.stage2_report,
+#                         "comment": stage2.comment
+#                     }
+#                     found = True
+#                     break
+
+#             if not found:
+#                 applications.append({
+#                     "organisation_name": stage2.organisation_name,
+#                     "user_id": stage2.user_id,
+#                     "stage1": None,
+#                     "stage2": {
+#                         "id": stage2.id,
+#                         "scope": stage2.scope,
+#                         "stage2_plan": stage2.stage2_plan,
+#                         "mail_from": stage2.mail_from,
+#                         "mail_to": stage2.mail_to,
+#                         "selected_date": stage2.selected_date,
+#                         "selected_comment_date": stage2.selected_comment_date,
+#                         "stage2_report": stage2.stage2_report,
+#                         "comment": stage2.comment
+#                     },
+#                     "zip_file_name": None
+#                 })
+
+#         # Process Dashboard data and add zip file details
+#         for dashboard in dashboard_data:
+#             for app in applications:
+#                 if app["organisation_name"] == dashboard.org_name and app["user_id"] == dashboard.user_id:
+#                     app["zip_file_name"] = dashboard.zip_file_name
+#                     break
+#             else:
+#                 # If no stage1/stage2 but only zip file exists, add it separately
+#                 applications.append({
+#                     "organisation_name": dashboard.org_name,
+#                     "user_id": dashboard.user_id,
+#                     "stage1": None,
+#                     "stage2": None,
+#                     "zip_file_name": dashboard.zip_file_name
+#                 })
+
+#         # Debugging output
+#         print("Retrieved applications:", applications)
+
+#         return jsonify({"applications": applications}), 200
+
+#     except Exception as e:
+#         print(f"Error fetching applications: {str(e)}")
+#         return jsonify({"error": str(e)}), 500
+
 @app.route("/decision/application/<string:organisation_name>", methods=["GET"])
 def decision_get_application_details(organisation_name):
     try:
-        # Fetch matching records
-        stage1_data = Stage1.query.filter(
-            Stage1.organisation_name.ilike(organisation_name)).all()
-        stage2_data = Stage2.query.filter(
-            Stage2.organisation_name.ilike(organisation_name)).all()
-        dashboard_data = Dashboard.query.filter(
-            Dashboard.org_name.ilike(organisation_name)).all()
+        # Fetch all matching records
+        stage1_data = Stage1.query.filter(Stage1.organisation_name.ilike(organisation_name)).all()
+        stage2_data = Stage2.query.filter(Stage2.organisation_name.ilike(organisation_name)).all()
+        dashboard_data = Dashboard.query.filter(Dashboard.org_name.ilike(organisation_name)).all()
 
         if not stage1_data and not stage2_data and not dashboard_data:
             return jsonify({"message": f"No data found for organisation '{organisation_name}'"}), 404
 
-        applications = []
+        # Use a dictionary keyed by organisation_name to merge stage1, stage2, and dashboard
+        applications_dict = {}
 
-        # Process Stage 1 data
+        # Merge Stage1 data
         for stage1 in stage1_data:
-            applications.append({
-                "organisation_name": stage1.organisation_name,
-                "user_id": stage1.user_id,
-                "stage1": {
-                    "id": stage1.id,
-                    "scope": stage1.scope,
-                    "stage1_plan": stage1.stage1_plan,
-                    "mail_from": stage1.mail_from,
-                    "mail_to": stage1.mail_to,
-                    "selected_date": stage1.selected_date,
-                    "selected_comment_date": stage1.selected_comment_date,
-                    "stage1_report": stage1.stage1_report,
-                    "comment": stage1.comment
-                },
-                "stage2": None,
-                "zip_file_name": None
-            })
-
-        # Process Stage 2 data
-        for stage2 in stage2_data:
-            found = False
-            for app in applications:
-                if app["organisation_name"] == stage2.organisation_name and app["user_id"] == stage2.user_id:
-                    app["stage2"] = {
-                        "id": stage2.id,
-                        "scope": stage2.scope,
-                        "stage2_plan": stage2.stage2_plan,
-                        "mail_from": stage2.mail_from,
-                        "mail_to": stage2.mail_to,
-                        "selected_date": stage2.selected_date,
-                        "selected_comment_date": stage2.selected_comment_date,
-                        "stage2_report": stage2.stage2_report,
-                        "comment": stage2.comment
-                    }
-                    found = True
-                    break
-
-            if not found:
-                applications.append({
-                    "organisation_name": stage2.organisation_name,
-                    "user_id": stage2.user_id,
-                    "stage1": None,
-                    "stage2": {
-                        "id": stage2.id,
-                        "scope": stage2.scope,
-                        "stage2_plan": stage2.stage2_plan,
-                        "mail_from": stage2.mail_from,
-                        "mail_to": stage2.mail_to,
-                        "selected_date": stage2.selected_date,
-                        "selected_comment_date": stage2.selected_comment_date,
-                        "stage2_report": stage2.stage2_report,
-                        "comment": stage2.comment
-                    },
-                    "zip_file_name": None
-                })
-
-        # Process Dashboard data and add zip file details
-        for dashboard in dashboard_data:
-            for app in applications:
-                if app["organisation_name"] == dashboard.org_name and app["user_id"] == dashboard.user_id:
-                    app["zip_file_name"] = dashboard.zip_file_name
-                    break
-            else:
-                # If no stage1/stage2 but only zip file exists, add it separately
-                applications.append({
-                    "organisation_name": dashboard.org_name,
-                    "user_id": dashboard.user_id,
+            key = stage1.organisation_name
+            if key not in applications_dict:
+                applications_dict[key] = {
+                    "organisation_name": stage1.organisation_name,
                     "stage1": None,
                     "stage2": None,
-                    "zip_file_name": dashboard.zip_file_name
-                })
+                    "zip_file_name": None
+                }
+            applications_dict[key]["stage1"] = {
+                "id": stage1.id,
+                "scope": stage1.scope,
+                "stage1_plan": stage1.stage1_plan,
+                "mail_from": stage1.mail_from,
+                "mail_to": stage1.mail_to,
+                "selected_date": stage1.selected_date,
+                "selected_comment_date": stage1.selected_comment_date,
+                "stage1_report": stage1.stage1_report,
+                "comment": stage1.comment
+            }
 
-        # Debugging output
-        print("Retrieved applications:", applications)
+        # Merge Stage2 data
+        for stage2 in stage2_data:
+            key = stage2.organisation_name
+            if key not in applications_dict:
+                applications_dict[key] = {
+                    "organisation_name": stage2.organisation_name,
+                    "stage1": None,
+                    "stage2": None,
+                    "zip_file_name": None
+                }
+            applications_dict[key]["stage2"] = {
+                "id": stage2.id,
+                "scope": stage2.scope,
+                "stage2_plan": stage2.stage2_plan,
+                "mail_from": stage2.mail_from,
+                "mail_to": stage2.mail_to,
+                "selected_date": stage2.selected_date,
+                "selected_comment_date": stage2.selected_comment_date,
+                "stage2_report": stage2.stage2_report,
+                "comment": stage2.comment
+            }
+
+        # Merge Dashboard zip files
+        for dashboard in dashboard_data:
+            key = dashboard.org_name
+            if key not in applications_dict:
+                applications_dict[key] = {
+                    "organisation_name": dashboard.org_name,
+                    "stage1": None,
+                    "stage2": None,
+                    "zip_file_name": None
+                }
+            applications_dict[key]["zip_file_name"] = dashboard.zip_file_name
+
+        applications = list(applications_dict.values())
+
+        # Debug print
+        print("Merged applications:", applications)
 
         return jsonify({"applications": applications}), 200
 

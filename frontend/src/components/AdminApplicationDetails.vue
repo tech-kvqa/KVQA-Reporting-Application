@@ -197,23 +197,29 @@
       // },
 
       async fetchAdminApplication() {
-  try {
-    // const response = await axios.get(`http://127.0.0.1:5000/admin/application/${this.organisation_name}`);
-    const response = await axios.get(`https://kvqa-reporting-application.onrender.com/admin/application/${this.organisation_name}`);
-    console.log(response.data);
+          try {
+            const response = await axios.get(
+              `https://kvqa-reporting-application.onrender.com/admin/application/${this.organisation_name}`
+            );
 
-    if (response.data?.applications?.length > 0) {
-      this.adminapplicationDetails = response.data.applications[0]; // Ensure the correct structure
-      console.log(this.adminapplicationDetails.stage1.selected_date)
-    } else {
-      console.error("No application data found.");
-      this.applicationDetails = {}; // Prevent undefined errors
-    }
-  } catch (error) {
-    console.error("Error fetching application details:", error);
-    this.applicationDetails = {}; // Prevent undefined errors
-  }
-},
+            const apps = response.data?.applications || [];
+
+            if (!apps.length) {
+              this.adminapplicationDetails = null;
+              return;
+            }
+
+            // Prefer application with zip file
+            this.adminapplicationDetails =
+              apps.find(app => app.zip_file_name) ||  // <- pick the app that has zip
+              apps[0];                               // fallback
+
+            console.log("Selected application:", this.adminapplicationDetails);
+          } catch (err) {
+            console.error("Fetch failed:", err);
+            this.adminapplicationDetails = null;
+          }
+        },
 
 
     
@@ -226,7 +232,7 @@
     
             const cleanFilename = filename.replace(/^uploads\//, "");
             // const response = await axios.get(`http://127.0.0.1:5000/admin/download/${encodeURIComponent(cleanFilename)}`, {
-            const response = await axios.get(`https://kvqa-reporting-application.onrender.com/download/${encodeURIComponent(cleanFilename)}`, {
+            const response = await axios.get(`https://kvqa-reporting-application.onrender.com/admin/download/${encodeURIComponent(cleanFilename)}`, {
               headers: { Authorization: `Bearer ${token}` },
               responseType: "blob",
             });
